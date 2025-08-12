@@ -1,0 +1,53 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <SolidColorBrush x:Key="BrushWindowBG"     Color="#0F172A"/>
+    <SolidColorBrush x:Key="BrushSurface"      Color="#111827"/>
+    <SolidColorBrush x:Key="BrushCard"         Color="#1F2937"/>
+    <SolidColorBrush x:Key="BrushCardBorder"   Color="#2B3648"/>
+    <SolidColorBrush x:Key="BrushDivider"      Color="#2A3445"/>
+
+    <SolidColorBrush x:Key="BrushHeaderBG"     Color="#111827"/>
+    <SolidColorBrush x:Key="BrushHeaderBorder" Color="#2A3445"/>
+    <SolidColorBrush x:Key="BrushFooterBG"     Color="#111827"/>
+    <SolidColorBrush x:Key="BrushFooterBorder" Color="#2A3445"/>
+
+    <SolidColorBrush x:Key="BrushPrimaryFG"    Color="#E5E7EB"/>
+    <SolidColorBrush x:Key="BrushSecondaryFG"  Color="#C7D2FE"/>
+    <SolidColorBrush x:Key="BrushMutedFG"      Color="#9CA3AF"/>
+    <SolidColorBrush x:Key="BrushDisabledFG"   Color="#6B7280"/>
+    <SolidColorBrush x:Key="BrushHeaderFG"     Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="BrushHeaderSubFG"  Color="#93C5FD"/>
+    <SolidColorBrush x:Key="BrushAvatarBG"     Color="#2A3445"/>
+
+    <SolidColorBrush x:Key="AccentBrush"        Color="#22D3EE"/>
+    <SolidColorBrush x:Key="AccentMuted"        Color="#073B4C"/>
+    <SolidColorBrush x:Key="AccentBrushHover"   Color="#67E8F9"/>
+    <SolidColorBrush x:Key="AccentBrushPressed" Color="#06B6D4"/>
+    <SolidColorBrush x:Key="AccentBorderBrush"  Color="#38BDF8"/>
+
+    <SolidColorBrush x:Key="SuccessBrush" Color="#34D399"/>
+    <SolidColorBrush x:Key="WarningBrush" Color="#FBBF24"/>
+    <SolidColorBrush x:Key="ErrorBrush"   Color="#F87171"/>
+    <SolidColorBrush x:Key="InfoBrush"    Color="#60A5FA"/>
+
+    <SolidColorBrush x:Key="ButtonFG"             Color="#0B1220"/>
+    <SolidColorBrush x:Key="ButtonBG"             Color="#22D3EE"/>
+    <SolidColorBrush x:Key="ButtonHoverBG"        Color="#67E8F9"/>
+    <SolidColorBrush x:Key="ButtonPressedBG"      Color="#06B6D4"/>
+    <SolidColorBrush x:Key="ButtonBorder"         Color="#38BDF8"/>
+    <SolidColorBrush x:Key="ButtonHoverBorder"    Color="#7DD3FC"/>
+    <SolidColorBrush x:Key="ButtonPressedBorder"  Color="#0891B2"/>
+
+    <SolidColorBrush x:Key="TextBoxFG"          Color="#E5E7EB"/>
+    <SolidColorBrush x:Key="TextBoxBG"          Color="#0F172A"/>
+    <SolidColorBrush x:Key="TextBoxBorder"      Color="#2B3648"/>
+    <SolidColorBrush x:Key="TextSelectionBG"    Color="#22D3EE"/>
+    <SolidColorBrush x:Key="TextSelectionFG"    Color="#0B1220"/>
+
+    <SolidColorBrush x:Key="ProgressBG"         Color="#2B3648"/>
+    <SolidColorBrush x:Key="ProgressIndicator"  Color="#22D3EE"/>
+
+    <FontFamily x:Key="FontBase">Segoe UI</FontFamily>
+</ResourceDictionary>

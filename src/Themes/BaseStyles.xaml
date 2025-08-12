@@ -1,0 +1,224 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- ======== Sizing & misc tokens ======== -->
+    <CornerRadius x:Key="CrSmall">4</CornerRadius>
+    <CornerRadius x:Key="CrMedium">8</CornerRadius>
+    <CornerRadius x:Key="CrLarge">12</CornerRadius>
+
+    <Thickness x:Key="CardPadding">12,10,12,10</Thickness>
+    <Thickness x:Key="ControlPadding">10,6,10,6</Thickness>
+    <Thickness x:Key="ListItemMargin">6</Thickness>
+    <Thickness x:Key="ThinBorder">1</Thickness>
+
+    <x:Double x:Key="AnimFast">0.15</x:Double>
+    <x:Double x:Key="AnimMed">0.25</x:Double>
+
+    <!-- Reusable shadows -->
+    <DropShadowEffect x:Key="ShadowL1" BlurRadius="8"  ShadowDepth="3" Direction="270" Opacity="0.35"/>
+    <DropShadowEffect x:Key="ShadowL2" BlurRadius="16" ShadowDepth="5" Direction="270" Opacity="0.45"/>
+
+    <!-- ======== Window & common surfaces ======== -->
+    <!-- Bind these in your XAML: Background="{DynamicResource BrushWindowBG}" etc. -->
+    <!-- (Brushes themselves come from the theme files below) -->
+
+    <!-- ======== Button ======== -->
+    <Style TargetType="Button">
+        <Setter Property="FontFamily" Value="{DynamicResource FontBase}" />
+        <Setter Property="Foreground" Value="{DynamicResource ButtonFG}" />
+        <Setter Property="Background" Value="{DynamicResource ButtonBG}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ButtonBorder}" />
+        <Setter Property="BorderThickness" Value="{DynamicResource ThinBorder}" />
+        <Setter Property="Padding" Value="{DynamicResource ControlPadding}" />
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border
+                        x:Name="bd"
+                        CornerRadius="{DynamicResource CrMedium}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
+                        <ContentPresenter
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            SnapsToDevicePixels="True"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="bd" Property="Background" Value="{DynamicResource ButtonHoverBG}"/>
+                            <Setter Property="BorderBrush" Value="{DynamicResource ButtonHoverBorder}"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="bd" Property="Background" Value="{DynamicResource ButtonPressedBG}"/>
+                            <Setter Property="BorderBrush" Value="{DynamicResource ButtonPressedBorder}"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="{DynamicResource BrushDisabledFG}"/>
+                            <Setter TargetName="bd" Property="Opacity" Value="0.65"/>
+                        </Trigger>
+                        <Trigger Property="IsDefault" Value="True">
+                            <Setter TargetName="bd" Property="Effect" Value="{DynamicResource ShadowL1}"/>
+                            <Setter Property="BorderBrush" Value="{DynamicResource AccentBorderBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsCancel" Value="True">
+                            <Setter Property="BorderBrush" Value="{DynamicResource BrushDivider}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ======== TextBox ======== -->
+    <Style TargetType="TextBox">
+        <Setter Property="FontFamily" Value="{DynamicResource FontBase}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextBoxFG}" />
+        <Setter Property="Background" Value="{DynamicResource TextBoxBG}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource TextBoxBorder}" />
+        <Setter Property="BorderThickness" Value="{DynamicResource ThinBorder}" />
+        <Setter Property="Padding" Value="{DynamicResource ControlPadding}" />
+        <Setter Property="CaretBrush" Value="{DynamicResource AccentBrush}"/>
+        <Setter Property="SelectionBrush" Value="{DynamicResource TextSelectionBG}"/>
+        <Setter Property="SelectionTextBrush" Value="{DynamicResource TextSelectionFG}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBox">
+                    <Border
+                        x:Name="bd"
+                        CornerRadius="{DynamicResource CrSmall}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
+                        <ScrollViewer x:Name="PART_ContentHost"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="bd" Property="BorderBrush" Value="{DynamicResource AccentBorderBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="bd" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
+                            <Setter TargetName="bd" Property="Effect" Value="{DynamicResource ShadowL1}"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="{DynamicResource BrushDisabledFG}"/>
+                            <Setter TargetName="bd" Property="Opacity" Value="0.65"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ======== ProgressBar ======== -->
+    <Style TargetType="ProgressBar">
+        <Setter Property="Foreground" Value="{DynamicResource ProgressIndicator}" />
+        <Setter Property="Background" Value="{DynamicResource ProgressBG}" />
+        <Setter Property="Height" Value="18"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ProgressBar">
+                    <Border
+                        CornerRadius="{DynamicResource CrSmall}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{DynamicResource BrushDivider}"
+                        BorderThickness="{DynamicResource ThinBorder}">
+                        <Grid ClipToBounds="True">
+                            <Rectangle x:Name="PART_Track" Fill="Transparent"/>
+                            <Rectangle x:Name="PART_Indicator"
+                                       Fill="{TemplateBinding Foreground}"
+                                       HorizontalAlignment="Left"
+                                       Width="0"/>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsIndeterminate" Value="True">
+                            <Setter TargetName="PART_Indicator" Property="Width" Value="80"/>
+                            <Setter TargetName="PART_Indicator" Property="HorizontalAlignment" Value="Left"/>
+                            <Setter TargetName="PART_Indicator" Property="Opacity" Value="0.9"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ======== ListView 'card' items ======== -->
+    <Style TargetType="ListView">
+        <Setter Property="Background" Value="{DynamicResource BrushSurface}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BrushDivider}"/>
+        <Setter Property="BorderThickness" Value="{DynamicResource ThinBorder}"/>
+    </Style>
+
+    <Style TargetType="ListViewItem">
+        <Setter Property="Margin" Value="{DynamicResource ListItemMargin}"/>
+        <Setter Property="Padding" Value="{DynamicResource CardPadding}"/>
+        <Setter Property="Foreground" Value="{DynamicResource BrushPrimaryFG}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListViewItem">
+                    <Border x:Name="Card"
+                            Background="{DynamicResource BrushCard}"
+                            BorderBrush="{DynamicResource BrushCardBorder}"
+                            BorderThickness="{DynamicResource ThinBorder}"
+                            CornerRadius="{DynamicResource CrMedium}">
+                        <ContentPresenter Margin="0" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Card" Property="Effect" Value="{DynamicResource ShadowL1}"/>
+                            <Setter TargetName="Card" Property="BorderBrush" Value="{DynamicResource AccentBorderBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Card" Property="Background" Value="{DynamicResource AccentMuted}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource BrushPrimaryFG}"/>
+                            <Setter TargetName="Card" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Card" Property="Opacity" Value="0.6"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ======== GroupBox header coloring ======== -->
+    <Style TargetType="GroupBox">
+        <Setter Property="Foreground" Value="{DynamicResource BrushPrimaryFG}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource BrushDivider}"/>
+        <Setter Property="Padding" Value="8"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="GroupBox">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Border Grid.Row="0" Background="{DynamicResource BrushHeaderBG}"
+                                CornerRadius="{DynamicResource CrSmall}"
+                                BorderBrush="{DynamicResource BrushHeaderBorder}"
+                                BorderThickness="{DynamicResource ThinBorder}">
+                            <ContentPresenter Margin="8,4" ContentSource="Header"
+                                              RecognizesAccessKey="True"
+                                              TextElement.Foreground="{DynamicResource BrushHeaderFG}"/>
+                        </Border>
+                        <Border Grid.Row="1" Background="{DynamicResource BrushSurface}"
+                                CornerRadius="{DynamicResource CrSmall}"
+                                BorderBrush="{DynamicResource BrushDivider}"
+                                BorderThickness="{DynamicResource ThinBorder}"
+                                Padding="8">
+                            <ContentPresenter />
+                        </Border>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ======== Default fonts (overridable in theme) ======== -->
+    <FontFamily x:Key="FontBase">Segoe UI</FontFamily>
+</ResourceDictionary>
