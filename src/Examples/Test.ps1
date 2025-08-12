@@ -1,13 +1,11 @@
-$ProjectRoot = Split-Path -Path $PSScriptRoot -Parent
-Import-Module "C:\Users\KRIST\Bluarch\Bluarch.WpfTools\output\module\Bluarch.WpfTools\1.0.0\Bluarch.WpfTools.psm1" -Force
+# Load your module & WPF bits
+Import-Module Bluarch.WpfTools -Force
+Load-WpfAssembly -Preset Standard -Silent
 
-Load-WpfAssembly -Preset All
+# Create the window with the “Default” template and apply a theme at window scope
+$mw = Add-WpfMainWindow -Type Default -Title "Bluarch" -Theme 'NordBlue' -PassThru
 
-
-
-$win = New-Object System.Windows.Window
-Initialize-WpfApplication -Theme NordBlue -Scope Window -Window $win -SetShutdownOnMainWindowClose
-Set-WpfWindow -Title "Bluarch"
+# Inject your header into the HeaderHost
 $null = Add-WpfHeader -Type Simple `
     -LogoPath (Join-Path $PSScriptRoot 'Assets\Icons\Home.png') `
     -Title 'BLUARCH' `
@@ -16,6 +14,7 @@ $null = Add-WpfHeader -Type Simple `
         @{ Icon = [Icons]::Github;   ToolTip = 'GitHub';   Click = { Start-Process 'https://github.com/krisbuch' } },
         @{ Icon = [Icons]::LinkedIn; ToolTip = 'LinkedIn'; Click = { Start-Process 'https://www.linkedin.com/in/kristianbuch/' } }
     ) `
-    -Into $win -GridRow 0
+    -Into $mw.HeaderHost
 
-$win.ShowDialog() | Out-Null
+# Show it
+$null = $mw.Window.ShowDialog()

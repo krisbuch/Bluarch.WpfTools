@@ -51,7 +51,7 @@ Return the created header control.
 Make sure Initialize-WpfApplication (your function) + Load-WpfAssembly have been run beforehand.
 #>
     [CmdletBinding()]
-    param (
+    param(
         [ValidateSet('Simple')]
         [string]$Type = 'Simple',
 
@@ -88,7 +88,7 @@ Make sure Initialize-WpfApplication (your function) + Load-WpfAssembly have been
     }
 
     # Load XAML view
-    $viewPath = Join-Path $PSScriptRoot "Views/Header/Header.$Type.xaml"
+    $viewPath = Join-Path $PSScriptRoot "Views/Header.$Type.xaml"
     if (-not (Test-Path -LiteralPath $viewPath))
     {
         throw "Header view not found: $viewPath"

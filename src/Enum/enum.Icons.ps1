@@ -1,117 +1,116 @@
 using namespace System
-enum Icons
-{
-    Activedirector
-    Analytics
-    Analyze
-    Applet
-    Appliances
-    Axure
-    Badge
-    Bin
-    Blues
-    Businessgoal
-    Casestudy
-    Cash
-    Certification
-    Chain
-    Cms
-    Combochart
-    Copilot
-    Csharp
-    Cybersecurity
-    Database
-    Databaseadministrator
-    Databaserestore
-    Databaseserver
-    Documentbug
-    Done
-    Edge
-    Electronicbrain
-    Exitasign
-    Exterior
-    Filepath
-    Fullversion
-    Generalocr
-    GitHub
-    Goal
-    Goalcollaborative
-    Hdmicable
-    Here
-    Highindicatorfilter
-    Hitman
-    Hologram
-    Home
-    Intelpowergadget
-    Internet
-    Keypress
-    Laptop
-    Laptopalert
-    Laptopcheck
-    Laptopcoding
-    Laptopmedal
-    Laptopsend
-    Laptopsetting
-    LinkedIn
-    Logitechoptionsplus
-    Lowindicatorfilter
-    Luminar
-    Microsd
-    Microsoftauthenticator
-    Name
-    Narrator
-    Navigation
-    Networkgateway
-    Networksymbol
-    Onscreenkeyboard
-    Ordercompleted
-    Pcie
-    Placeholderthumbnailedifact
-    Powerapps
-    Powerautomate
-    Powerbi
-    Powershell
-    Powershellise
-    Profile
-    Project
-    Queryinnerjoin
-    Queryinnerjoinleft
-    Queryinnerjoinright
-    Queryouterjoin
-    Queryouterjoinleft
-    Queryouterjoinright
-    Ram
-    Region
-    Remote
-    Remotedesktop
-    Sd
-    Simulation
-    Sound
-    Ssh
-    Stackoverflow
-    Teams
-    Toggleoff
-    Trial
-    Usbtypec
-    Useradmin
-    Userapply
-    Userbusinessman
-    Userdecline
-    Usergroup
-    Userlayoff
-    Usertester
-    Userunfriend
-    Videoidverification
-    Visualbasic
-    Vsblend
-    Website
-    Windowsdefender
-    Windowsdefragmenter
-    Windowsettings
-    Windowsmemorydiagnosis
-    Windowsupdate
-    Workstation
-    X64
-    X86
-    Xmltransformer
+enum Icons {
+Activedirector = 0
+Analytics = 1
+Analyze = 2
+Applet = 3
+Appliances = 4
+Axure = 5
+Badge = 6
+Bin = 7
+Blues = 8
+Businessgoal = 9
+Casestudy = 10
+Cash = 11
+Certification = 12
+Chain = 13
+Cms = 14
+Combochart = 15
+Copilot = 16
+Csharp = 17
+Cybersecurity = 18
+Database = 19
+Databaseadministrator = 20
+Databaserestore = 21
+Databaseserver = 22
+Documentbug = 23
+Done = 24
+Edge = 25
+Electronicbrain = 26
+Exitasign = 27
+Exterior = 28
+Filepath = 29
+Fullversion = 30
+Generalocr = 31
+GitHub = 32
+Goal = 33
+Goalcollaborative = 34
+Hdmicable = 35
+Here = 36
+Highindicatorfilter = 37
+Hitman = 38
+Hologram = 39
+Home = 40
+Intelpowergadget = 41
+Internet = 42
+Keypress = 43
+Laptop = 44
+Laptopalert = 45
+Laptopcheck = 46
+Laptopcoding = 47
+Laptopmedal = 48
+Laptopsend = 49
+Laptopsetting = 50
+LinkedIn = 51
+Logitechoptionsplus = 52
+Lowindicatorfilter = 53
+Luminar = 54
+Microsd = 55
+Microsoftauthenticator = 56
+Name = 57
+Narrator = 58
+Navigation = 59
+Networkgateway = 60
+Networksymbol = 61
+Onscreenkeyboard = 62
+Ordercompleted = 63
+Pcie = 64
+Placeholderthumbnailedifact = 65
+Powerapps = 66
+Powerautomate = 67
+Powerbi = 68
+Powershell = 69
+Powershellise = 70
+Profile = 71
+Project = 72
+Queryinnerjoin = 73
+Queryinnerjoinleft = 74
+Queryinnerjoinright = 75
+Queryouterjoin = 76
+Queryouterjoinleft = 77
+Queryouterjoinright = 78
+Ram = 79
+Region = 80
+Remote = 81
+Remotedesktop = 82
+Sd = 83
+Simulation = 84
+Sound = 85
+Ssh = 86
+Stackoverflow = 87
+Teams = 88
+Toggleoff = 89
+Trial = 90
+Usbtypec = 91
+Useradmin = 92
+Userapply = 93
+Userbusinessman = 94
+Userdecline = 95
+Usergroup = 96
+Userlayoff = 97
+Usertester = 98
+Userunfriend = 99
+Videoidverification = 100
+Visualbasic = 101
+Vsblend = 102
+Website = 103
+Windowsdefender = 104
+Windowsdefragmenter = 105
+Windowsettings = 106
+Windowsmemorydiagnosis = 107
+Windowsupdate = 108
+Workstation = 109
+X64 = 110
+X86 = 111
+Xmltransformer = 112
 }
