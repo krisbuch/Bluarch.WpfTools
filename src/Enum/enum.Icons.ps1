@@ -1,4 +1,3 @@
-using namespace System
 enum Icons {
 Activedirector = 0
 Analytics = 1

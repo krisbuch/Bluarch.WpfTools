@@ -1,85 +1,96 @@
 function Add-WpfHeader
 {
     <#
-.SYNOPSIS
-Adds a header view (from Views\Header.<Type>.xaml) to a container, or returns it for manual placement.
+Adds a header view (from Views\Header.<Type>.xaml) to a container, or returns it.
 
-.DESCRIPTION
-- Loads the XAML for the requested header Type (e.g. 'Simple').
+- Loads the XAML for the requested header Type (e.g. "Simple").
 - Sets logo, Title, Subtitle.
-- Adds right-side action icons (image + tooltip + click script).
-- If -Into is provided, inserts into that container (Grid/Panel/Decorator supported), otherwise returns the control.
+- Adds right-side action icons (resolved via Resolve-WpfIcon or Insert-WpfIcon).
+- If -Into is provided, inserts the control into a parent. Otherwise returns it.
 
 .PARAMETER Type
-Header view type (matches XAML file 'Views\Header.<Type>.xaml'). Default: Simple.
+Name of the XAML view (matches Views\Header.<Type>.xaml). Default: Simple.
 
 .PARAMETER LogoPath
-Path/URI to a logo image. Optional.
+Optional path or name of the logo image.
 
 .PARAMETER Title
-Header title text.
+Header title. Default: BLUARCH.
 
 .PARAMETER Subtitle
-Header subtitle text.
+Header subtitle.
 
 .PARAMETER Icons
-Array of items with properties:
-- Icon     : [Icons] enum value (file resolved as $PSScriptRoot\Assets\Icons\<Icon>.png)
-- ToolTip  : string (optional)
-- Click    : scriptblock (optional) – executed on MouseLeftButtonUp
+Array of hashtables/objects describing right‑side icons. Each item can have:
+- Icon    : string (icon name or file path) or [System.Windows.Media.ImageSource]
+- ToolTip : string (optional)
+- Click   : scriptblock (optional) – executed on MouseLeftButtonUp
 
-Examples:
+Example:
     @(
-      @{ Icon = [Icons]::Github;   ToolTip='Open GitHub';   Click = { Start-Process 'https://github.com/bluagentis' } },
-      @{ Icon = [Icons]::Settings; ToolTip='Settings';      Click = { [System.Windows.MessageBox]::Show('Settings') } }
+      @{ Icon = 'Github';   ToolTip='Open GitHub';   Click = { Start-Process 'https://github.com/bluagentis' } },
+      @{ Icon = 'Settings'; ToolTip='Settings';      Click = { [System.Windows.MessageBox]::Show('Settings') } }
     )
 
 .PARAMETER Into
-Parent to insert the header into. Supports: Grid (Children), Panel (Children), Decorator (Child), ContentControl (Content).
-If omitted, the control is returned.
+Parent control to insert the header into (Grid, Panel, Decorator, ContentControl).
+If omitted, the header control is returned for manual insertion.
 
 .PARAMETER GridRow
-Row index if Into is a Grid. Default: 0.
+Grid row index for Grid parents. Default: 0.
 
 .PARAMETER GridColumn
-Column index if Into is a Grid. Default: 0.
+Grid column index for Grid parents. Default: 0.
 
 .PARAMETER PassThru
-Return the created header control.
+Return the created header control even when inserted.
 
 .NOTES
-Make sure Initialize-WpfApplication (your function) + Load-WpfAssembly have been run beforehand.
+Requires Resolve-WpfIcon (or Insert-WpfIcon) to locate icons in $PSScriptRoot\Assets\Icons.
+Make sure Load-WpfAssembly and Initialize-WpfApplication have been called first.
 #>
     [CmdletBinding()]
-    param(
+    param (
+        [Parameter()]
         [ValidateSet('Simple')]
         [string]$Type = 'Simple',
 
+        [Parameter()]
         [string]$LogoPath,
+
+        [Parameter()]
         [string]$Title = 'BLUARCH',
+
+        [Parameter()]
         [string]$Subtitle,
 
+        [Parameter()]
         [System.Collections.IEnumerable]$Icons,
 
+        [Parameter()]
         [System.Windows.FrameworkElement]$Into,
+
+        [Parameter()]
         [int]$GridRow = 0,
+
+        [Parameter()]
         [int]$GridColumn = 0,
 
         [switch]$PassThru
     )
 
-    # Helper: make BitmapImage safely
-    function New-BitmapImage([string]$pathOrUri)
+    # Helper to create BitmapImage from path/URI
+    function New-BitmapImage([string]$p)
     {
         $bmp = [System.Windows.Media.Imaging.BitmapImage]::new()
         $bmp.BeginInit()
-        if ([System.IO.Path]::IsPathRooted($pathOrUri) -or (Test-Path -LiteralPath $pathOrUri))
+        if ([System.IO.Path]::IsPathRooted($p) -or (Test-Path -LiteralPath $p))
         {
-            $bmp.UriSource = [Uri]::new((Resolve-Path -LiteralPath $pathOrUri).ProviderPath)
+            $bmp.UriSource = [Uri]::new((Resolve-Path -LiteralPath $p).ProviderPath)
         }
         else
         {
-            $bmp.UriSource = [Uri]::new($pathOrUri, [UriKind]::RelativeOrAbsolute)
+            $bmp.UriSource = [Uri]::new($p, [UriKind]::RelativeOrAbsolute)
         }
         $bmp.CacheOption = [System.Windows.Media.Imaging.BitmapCacheOption]::OnLoad
         $bmp.EndInit()
@@ -87,8 +98,8 @@ Make sure Initialize-WpfApplication (your function) + Load-WpfAssembly have been
         return $bmp
     }
 
-    # Load XAML view
-    $viewPath = Join-Path $PSScriptRoot "Views/Header.$Type.xaml"
+    # Load XAML
+    $viewPath = Join-Path $PSScriptRoot "Views/Header/Header.$Type.xaml"
     if (-not (Test-Path -LiteralPath $viewPath))
     {
         throw "Header view not found: $viewPath"
@@ -96,90 +107,101 @@ Make sure Initialize-WpfApplication (your function) + Load-WpfAssembly have been
     [xml]$xaml = Get-Content -LiteralPath $viewPath -Raw
     $ctrl = [Windows.Markup.XamlReader]::Load([System.Xml.XmlNodeReader]::new($xaml))
 
-    # Resolve named parts
+    # Find named parts
     $logo = $ctrl.FindName('HeaderLogo')
-    $tbTitle = $ctrl.FindName('HeaderTitle')
+    $tbTit = $ctrl.FindName('HeaderTitle')
     $tbSub = $ctrl.FindName('HeaderSubtitle')
     $actions = $ctrl.FindName('HeaderActions')
-
-    if ($null -eq $tbTitle -or $null -eq $tbSub -or $null -eq $actions)
+    if ($null -eq $tbTit -or $null -eq $tbSub -or $null -eq $actions)
     {
-        throw "Header XAML is missing required named elements (HeaderTitle, HeaderSubtitle, HeaderActions)."
+        throw "Header XAML is missing required named elements."
     }
 
-    # Apply content
+    # Set logo, title, subtitle
     if ($LogoPath -and $logo)
     {
-        $logo.Source = New-BitmapImage $LogoPath
+        # Resolve logo via Resolve-WpfIcon/Insert-WpfIcon or treat as direct path
+        try
+        {
+            $img = Resolve-WpfIcon -Name $LogoPath -AsImageSource -ThrowOnNotFound
+        }
+        catch
+        {
+            $img = New-BitmapImage $LogoPath
+        }
+        $logo.Source = $img
     }
-    if ($Title)
-    {
-        $tbTitle.Text = $Title
-    }
+    $tbTit.Text = $Title
     if ($Subtitle)
     {
         $tbSub.Text = $Subtitle
     }
 
-    # Add right-side icons
+    # Add icons
     foreach ($item in ($Icons ?? @()))
     {
-        # Support hashtable or object
-        $iconName = [Icons]([string]$item.Icon)
-        $toolTip = $item.ToolTip
-        $clickSB = $item.Click
+        $ic = $null
+        $tip = $item.ToolTip
+        $click = $item.Click
 
-        $iconPath = Join-Path $PSScriptRoot ("Assets\Icons\{0}.png" -f $iconName)
-        if (-not (Test-Path -LiteralPath $iconPath))
+        # If icon is already an ImageSource, use it; else resolve name/path
+        if ($item.Icon -is [System.Windows.Media.ImageSource])
         {
-            throw "Icon not found: $iconPath"
+            $ic = $item.Icon
+        }
+        else
+        {
+            $nameOrPath = [string]$item.Icon
+            # Try to resolve via Resolve-WpfIcon first
+            try
+            {
+                $ic = Resolve-WpfIcon -Name $nameOrPath -AsImageSource -ThrowOnNotFound
+            }
+            catch
+            {
+                # If not found, assume it's a file path
+                $ic = New-BitmapImage $nameOrPath
+            }
         }
 
-        $img = New-Object System.Windows.Controls.Image
+        $img = [System.Windows.Controls.Image]::new()
         $img.Width = 28
         $img.Height = 28
         $img.Margin = [System.Windows.Thickness]::new(8, 0, 0, 0)
         $img.Stretch = [System.Windows.Media.Stretch]::Uniform
         $img.Cursor = [System.Windows.Input.Cursors]::Hand
-        if ($toolTip)
+        if ($tip)
         {
-            $img.ToolTip = $toolTip
+            $img.ToolTip = $tip
         }
-        $img.Source = New-BitmapImage $iconPath
-
-        if ($clickSB -is [scriptblock])
+        $img.Source = $ic
+        if ($click -is [scriptblock])
         {
-            # capture the scriptblock in a local var so it closes correctly
-            $sb = $clickSB.GetNewClosure()
+            $sb = $click.GetNewClosure()
             $img.Add_MouseLeftButtonUp([System.Windows.Input.MouseButtonEventHandler] {
-                    param($sender, $args) & $sb
+                    param($s, $e) & $sb
                 })
         }
-
-        [void]$actions.Children.Add($img)
+        $actions.Children.Add($img) | Out-Null
     }
 
-    # Insert into parent if provided
+    # Insert or return
     if ($Into)
     {
-        # Grid -> Children, set row/col
         if ($Into -is [System.Windows.Controls.Grid])
         {
             [System.Windows.Controls.Grid]::SetRow($ctrl, $GridRow)
             [System.Windows.Controls.Grid]::SetColumn($ctrl, $GridColumn)
-            [void]$Into.Children.Add($ctrl)
+            $Into.Children.Add($ctrl) | Out-Null
         }
-        # Panel (StackPanel, DockPanel, WrapPanel, etc.) -> Children
         elseif ($Into.PSObject.Properties['Children'])
         {
-            [void]$Into.Children.Add($ctrl)
+            $Into.Children.Add($ctrl) | Out-Null
         }
-        # Decorator (Border) -> Child
         elseif ($Into.PSObject.Properties['Child'])
         {
             $Into.Child = $ctrl
         }
-        # ContentControl -> Content
         elseif ($Into.PSObject.Properties['Content'])
         {
             $Into.Content = $ctrl
