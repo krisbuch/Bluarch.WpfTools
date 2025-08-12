@@ -10,6 +10,8 @@ BuiltModuleSubdirectory: module
 CopyPaths:
   - Themes
   - Views
+  - Assets
+  - Libs
 #  - DSCResources
   # - Modules
 Encoding: UTF8

@@ -1,0 +1,23 @@
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Bluarch App" Width="1100" Height="720"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource BrushWindowBG}">
+    <Grid x:Name="RootGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>  <!-- Header -->
+            <RowDefinition Height="*"/>     <!-- Content -->
+            <RowDefinition Height="Auto"/>  <!-- Footer -->
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/> <!-- Sidebar -->
+            <ColumnDefinition Width="*"/>    <!-- Main body -->
+        </Grid.ColumnDefinitions>
+
+        <!-- Slots (ContentControl makes injection easy) -->
+        <ContentControl x:Name="HeaderHost" Grid.Row="0" Grid.ColumnSpan="2"/>
+        <ContentControl x:Name="SidebarHost" Grid.Row="1" Grid.Column="0"/>
+        <ContentControl x:Name="BodyHost" Grid.Row="1" Grid.Column="1"/>
+        <ContentControl x:Name="FooterHost" Grid.Row="2" Grid.ColumnSpan="2"/>
+    </Grid>
+</Window>
