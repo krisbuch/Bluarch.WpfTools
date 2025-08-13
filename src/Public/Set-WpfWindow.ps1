@@ -1,5 +1,6 @@
-function Set-WpfWindow {
-<#
+function Set-WpfWindow
+{
+    <#
 .SYNOPSIS
     Configure an existing WPF Window (System.Windows.Window) in a single, idempotent call.
 
@@ -103,103 +104,216 @@ function Set-WpfWindow {
 
 .OUTPUTS
     Returns the Window (unless -ShowDialog is used, in which case the dialog result is returned).
+
+.NOTES
+    📦 CONTENT
+    Module     ▹ Bluarch.WpfTools
+    Function   ▹ Set-WpfWindow
+    Version    ▹ 1.0.0
+    Published  ▹ 2025-08-12
+
+    🪪 AUTHOR
+    Name       ▹ Kristian Holm Buch
+    Company    ▹ Bluagentis
+    Location   ▹ Copenhagen, Denmark
+    GitHub     ▹ https://github.com/krisbuch
+    LinkedIn   ▹ https://linkedin.com/in/kristianbuch
+
+    ©️ COPYRIGHT
+    Bluarch © 2025 by Kristian Holm Buch. All rights reserved.
+
+    🧾 LICENSE
+    Licensed under Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International.
+    To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-nd/4.0/
+
+    This license requires that reusers give credit to the creator.
+    It allows reusers to copy and distribute the material in any medium or
+    format in unadapted form and for noncommercial purposes only.
 #>
-    [CmdletBinding(DefaultParameterSetName='Default')]
+    [CmdletBinding(DefaultParameterSetName = 'Default')]
     param(
-        [Parameter(Mandatory, Position=0)]
+        [Parameter(Mandatory, Position = 0)]
         [System.Windows.Window]$Window,
 
+        [Parameter()]
         [string]$Title,
 
+        [Parameter()]
         [double]$Width,
+
+        [Parameter()]
         [double]$Height,
+
+        [Parameter()]
         [double]$MinWidth,
+
+        [Parameter()]
         [double]$MinHeight,
+
+        [Parameter()]
         [double]$MaxWidth,
+
+        [Parameter()]
         [double]$MaxHeight,
 
+        [Parameter()]
         [double]$Left,
+
+        [Parameter()]
         [double]$Top,
 
+        [Parameter()]
         [System.Windows.SizeToContent]$SizeToContent,
+
+        [Parameter()]
         [System.Windows.ResizeMode]$ResizeMode,
+
+        [Parameter()]
         [System.Windows.WindowStyle]$WindowStyle,
+
+        [Parameter()]
         [System.Windows.WindowStartupLocation]$WindowStartupLocation,
+
+        [Parameter()]
         [System.Windows.WindowState]$WindowState,
 
+        [Parameter()]
         [bool]$Topmost,
+
+        [Parameter()]
         [bool]$ShowInTaskbar,
+
+        [Parameter()]
         [bool]$ShowActivated,
 
+        [Parameter()]
         [bool]$AllowsTransparency,
-        [ValidateRange(0.0,1.0)]
+
+        [Parameter()]
+        [ValidateRange(0.0, 1.0)]
         [double]$Opacity,
 
+        [Parameter()]
         [object]$Background,
+
+        [Parameter()]
         [object]$Foreground,
 
+        [Parameter()]
         [System.Windows.Media.FontFamily]$FontFamily,
+
+        [Parameter()]
         [double]$FontSize,
+
+        [Parameter()]
         [System.Windows.FontWeight]$FontWeight,
+
+        [Parameter()]
         [System.Windows.FontStyle]$FontStyle,
+
+        [Parameter()]
         [System.Windows.FontStretch]$FontStretch,
 
-        [string]$IconPath,
+        [Parameter()]
+        [string]$IconPath = (Join-Path -Path $PSScriptRoot -ChildPath "Assets\Icons\BluarchAuthor.png"),
+
+        [Parameter()]
         [string]$IconBase64,
+
+        [Parameter()]
         [System.Windows.Media.ImageSource]$IconSource,
 
+        [Parameter()]
         [System.Windows.Window]$OwnerWindow,
 
+        [Parameter()]
         [string[]]$ThemePaths,
+
+        [Parameter()]
         [switch]$ClearWindowResources,
 
+        [Parameter()]
         [string]$ContentXamlPath,
 
+        [Parameter()]
         [switch]$DisableMinimizeButton,
+
+        [Parameter()]
         [switch]$DisableMaximizeButton,
 
+        [Parameter()]
         [switch]$Show,
+
+        [Parameter()]
         [switch]$ShowDialog
     )
 
-    begin {
+    begin
+    {
         # STA required
-        if ([Threading.Thread]::CurrentThread.GetApartmentState() -ne 'STA') {
+        if ([Threading.Thread]::CurrentThread.GetApartmentState() -ne 'STA')
+        {
             throw "Set-WpfWindow: WPF requires STA. Start pwsh with -STA or run inside an STA runspace."
         }
 
         # Helpers
-        function _ConvertToBrush([object]$v) {
-            if ($null -eq $v) { return $null }
-            if ($v -is [System.Windows.Media.Brush]) { return $v }
+        function _ConvertToBrush([object]$v)
+        {
+            if ($null -eq $v)
+            {
+                return $null
+            }
+            if ($v -is [System.Windows.Media.Brush])
+            {
+                return $v
+            }
             $bc = [System.Windows.Media.BrushConverter]::new()
-            try { return [System.Windows.Media.Brush]$bc.ConvertFromString([string]$v) }
-            catch { throw "Invalid brush value: '$v'" }
+            try
+            {
+                return [System.Windows.Media.Brush]$bc.ConvertFromString([string]$v)
+            }
+            catch
+            {
+                throw "Invalid brush value: '$v'"
+            }
         }
 
-        function _LoadImageSourceFromBase64([string]$b64) {
-            if ([string]::IsNullOrWhiteSpace($b64)) { return $null }
-            if ($b64 -match '^data:image\/[a-zA-Z]+;base64,') {
-                $b64 = $b64 -replace '^data:image\/[a-zA-Z]+;base64,',''
+        function _LoadImageSourceFromBase64([string]$b64)
+        {
+            if ([string]::IsNullOrWhiteSpace($b64))
+            {
+                return $null
             }
-            try {
-                $bytes  = [Convert]::FromBase64String($b64)
-                $ms     = [System.IO.MemoryStream]::new($bytes)
-                $bmp    = [System.Windows.Media.Imaging.BitmapImage]::new()
+            if ($b64 -match '^data:image\/[a-zA-Z]+;base64,')
+            {
+                $b64 = $b64 -replace '^data:image\/[a-zA-Z]+;base64,', ''
+            }
+            try
+            {
+                $bytes = [Convert]::FromBase64String($b64)
+                $ms = [System.IO.MemoryStream]::new($bytes)
+                $bmp = [System.Windows.Media.Imaging.BitmapImage]::new()
                 $bmp.BeginInit()
                 $bmp.StreamSource = $ms
-                $bmp.CacheOption  = [System.Windows.Media.Imaging.BitmapCacheOption]::OnLoad
+                $bmp.CacheOption = [System.Windows.Media.Imaging.BitmapCacheOption]::OnLoad
                 $bmp.EndInit()
                 $bmp.Freeze()
                 return $bmp
-            } catch {
+            }
+            catch
+            {
                 throw "IconBase64 could not be decoded: $($_.Exception.Message)"
             }
         }
 
-        function _LoadImageSourceFromPath([string]$path) {
-            if ([string]::IsNullOrWhiteSpace($path)) { return $null }
-            if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
+        function _LoadImageSourceFromPath([string]$path)
+        {
+            if ([string]::IsNullOrWhiteSpace($path))
+            {
+                return $null
+            }
+            if (-not (Test-Path -LiteralPath $path -PathType Leaf))
+            {
                 throw "IconPath not found: $path"
             }
             $uri = [System.Uri]::new((Resolve-Path -LiteralPath $path).ProviderPath)
@@ -219,93 +333,161 @@ public static class User32 {
     [DllImport("user32.dll")] public static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
 }
 "@ -ErrorAction SilentlyContinue
-        $GWL_STYLE     = -16
-        $WS_MINIMIZEBOX= 0x00020000
-        $WS_MAXIMIZEBOX= 0x00010000
+        $GWL_STYLE = -16
+        $WS_MINIMIZEBOX = 0x00020000
+        $WS_MAXIMIZEBOX = 0x00010000
 
         # Apply caption style when handle exists
         $applyCaptionStyles = {
-            param($w,$disableMin,$disableMax)
+            param($w, $disableMin, $disableMax)
             $src = [System.Windows.Interop.HwndSource]::FromVisual($w)
-            if ($null -eq $src) { return }
+            if ($null -eq $src)
+            {
+                return
+            }
             $h = $src.Handle
-            if ($h -eq [IntPtr]::Zero) { return }
+            if ($h -eq [IntPtr]::Zero)
+            {
+                return
+            }
             $style = [Win32.User32]::GetWindowLong($h, $GWL_STYLE)
-            if ($disableMin) { $style = $style & (~$WS_MINIMIZEBOX) }
-            if ($disableMax) { $style = $style & (~$WS_MAXIMIZEBOX) }
+            if ($disableMin)
+            {
+                $style = $style & (~$WS_MINIMIZEBOX)
+            }
+            if ($disableMax)
+            {
+                $style = $style & (~$WS_MAXIMIZEBOX)
+            }
             [void][Win32.User32]::SetWindowLong($h, $GWL_STYLE, $style)
         }
     }
 
-    process {
-        if ($null -eq $Window) { throw "Set-WpfWindow: -Window cannot be null." }
+    process
+    {
+        if ($null -eq $Window)
+        {
+            throw "Set-WpfWindow: -Window cannot be null."
+        }
 
         # Title
-        if ($PSBoundParameters.ContainsKey('Title')) { $Window.Title = $Title }
+        if ($PSBoundParameters.ContainsKey('Title'))
+        {
+            $Window.Title = $Title
+        }
 
         # Size & position
-        foreach ($p in 'Width','Height','MinWidth','MinHeight','MaxWidth','MaxHeight','Left','Top') {
-            if ($PSBoundParameters.ContainsKey($p)) { $Window.$p = $PSBoundParameters[$p] }
+        foreach ($p in 'Width', 'Height', 'MinWidth', 'MinHeight', 'MaxWidth', 'MaxHeight', 'Left', 'Top')
+        {
+            if ($PSBoundParameters.ContainsKey($p))
+            {
+                $Window.$p = $PSBoundParameters[$p]
+            }
         }
 
         # Layout-related enums
-        foreach ($p in 'SizeToContent','ResizeMode','WindowStyle','WindowStartupLocation','WindowState') {
-            if ($PSBoundParameters.ContainsKey($p)) { $Window.$p = $PSBoundParameters[$p] }
+        foreach ($p in 'SizeToContent', 'ResizeMode', 'WindowStyle', 'WindowStartupLocation', 'WindowState')
+        {
+            if ($PSBoundParameters.ContainsKey($p))
+            {
+                $Window.$p = $PSBoundParameters[$p]
+            }
         }
 
         # AllowsTransparency must have WindowStyle=None
-        if ($PSBoundParameters.ContainsKey('AllowsTransparency')) {
+        if ($PSBoundParameters.ContainsKey('AllowsTransparency'))
+        {
             $Window.AllowsTransparency = $AllowsTransparency
-            if ($AllowsTransparency -and $Window.WindowStyle -ne [System.Windows.WindowStyle]::None) {
+            if ($AllowsTransparency -and $Window.WindowStyle -ne [System.Windows.WindowStyle]::None)
+            {
                 # Auto-fix to avoid runtime exception
                 $Window.WindowStyle = [System.Windows.WindowStyle]::None
             }
         }
 
         # Behavior flags
-        foreach ($p in 'Topmost','ShowInTaskbar','ShowActivated') {
-            if ($PSBoundParameters.ContainsKey($p)) { $Window.$p = $PSBoundParameters[$p] }
+        foreach ($p in 'Topmost', 'ShowInTaskbar', 'ShowActivated')
+        {
+            if ($PSBoundParameters.ContainsKey($p))
+            {
+                $Window.$p = $PSBoundParameters[$p]
+            }
         }
 
         # Opacity
-        if ($PSBoundParameters.ContainsKey('Opacity')) { $Window.Opacity = $Opacity }
+        if ($PSBoundParameters.ContainsKey('Opacity'))
+        {
+            $Window.Opacity = $Opacity
+        }
 
         # Brushes
-        if ($PSBoundParameters.ContainsKey('Background')) { $Window.Background = _ConvertToBrush $Background }
-        if ($PSBoundParameters.ContainsKey('Foreground')) { $Window.Foreground = _ConvertToBrush $Foreground }
+        if ($PSBoundParameters.ContainsKey('Background'))
+        {
+            $Window.Background = _ConvertToBrush $Background
+        }
+        if ($PSBoundParameters.ContainsKey('Foreground'))
+        {
+            $Window.Foreground = _ConvertToBrush $Foreground
+        }
 
         # Fonts
-        foreach ($p in 'FontFamily','FontSize','FontWeight','FontStyle','FontStretch') {
-            if ($PSBoundParameters.ContainsKey($p)) { $Window.$p = $PSBoundParameters[$p] }
+        foreach ($p in 'FontFamily', 'FontSize', 'FontWeight', 'FontStyle', 'FontStretch')
+        {
+            if ($PSBoundParameters.ContainsKey($p))
+            {
+                $Window.$p = $PSBoundParameters[$p]
+            }
         }
 
         # Owner
-        if ($PSBoundParameters.ContainsKey('OwnerWindow')) { $Window.Owner = $OwnerWindow }
+        if ($PSBoundParameters.ContainsKey('OwnerWindow'))
+        {
+            $Window.Owner = $OwnerWindow
+        }
 
         # Icon (precedence: IconSource > IconPath > IconBase64)
-        if ($PSBoundParameters.ContainsKey('IconSource') -and $IconSource) {
+        if ($PSBoundParameters.ContainsKey('IconSource') -and $IconSource)
+        {
             $Window.Icon = $IconSource
-        } elseif ($PSBoundParameters.ContainsKey('IconPath') -and $IconPath) {
+        }
+        elseif ($PSBoundParameters.ContainsKey('IconPath') -and $IconPath)
+        {
             $Window.Icon = _LoadImageSourceFromPath $IconPath
-        } elseif ($PSBoundParameters.ContainsKey('IconBase64') -and $IconBase64) {
+        }
+        elseif ($PSBoundParameters.ContainsKey('IconBase64') -and $IconBase64)
+        {
             $Window.Icon = _LoadImageSourceFromBase64 $IconBase64
         }
 
         # Merge ResourceDictionaries at Window scope
-        if ($PSBoundParameters.ContainsKey('ThemePaths') -and $ThemePaths) {
-            if (-not $Window.Resources) { $Window.Resources = [System.Windows.ResourceDictionary]::new() }
-            if ($ClearWindowResources) { $Window.Resources.MergedDictionaries.Clear() }
+        if ($PSBoundParameters.ContainsKey('ThemePaths') -and $ThemePaths)
+        {
+            if (-not $Window.Resources)
+            {
+                $Window.Resources = [System.Windows.ResourceDictionary]::new()
+            }
+            if ($ClearWindowResources)
+            {
+                $Window.Resources.MergedDictionaries.Clear()
+            }
 
-            foreach ($p in $ThemePaths) {
-                if (-not (Test-Path -LiteralPath $p -PathType Leaf)) { throw "Theme not found: $p" }
+            foreach ($p in $ThemePaths)
+            {
+                if (-not (Test-Path -LiteralPath $p -PathType Leaf))
+                {
+                    throw "Theme not found: $p"
+                }
                 $abs = (Resolve-Path -LiteralPath $p).ProviderPath
                 $uri = [System.Uri]::new($abs, [System.UriKind]::Absolute)
 
                 # Remove duplicates by Source
                 $dupes = @($Window.Resources.MergedDictionaries | Where-Object {
-                    $_.Source -and $_.Source.AbsoluteUri -eq $uri.AbsoluteUri
-                })
-                foreach ($d in $dupes) { [void]$Window.Resources.MergedDictionaries.Remove($d) }
+                        $_.Source -and $_.Source.AbsoluteUri -eq $uri.AbsoluteUri
+                    })
+                foreach ($d in $dupes)
+                {
+                    [void]$Window.Resources.MergedDictionaries.Remove($d)
+                }
 
                 $rd = [System.Windows.ResourceDictionary]::new()
                 $rd.Source = $uri
@@ -314,22 +496,28 @@ public static class User32 {
         }
 
         # Load Content from XAML if requested
-        if ($PSBoundParameters.ContainsKey('ContentXamlPath') -and $ContentXamlPath) {
-            if (-not (Test-Path -LiteralPath $ContentXamlPath -PathType Leaf)) {
+        if ($PSBoundParameters.ContainsKey('ContentXamlPath') -and $ContentXamlPath)
+        {
+            if (-not (Test-Path -LiteralPath $ContentXamlPath -PathType Leaf))
+            {
                 throw "ContentXamlPath not found: $ContentXamlPath"
             }
-            $xml  = [xml](Get-Content -Raw -LiteralPath $ContentXamlPath)
+            $xml = [xml](Get-Content -Raw -LiteralPath $ContentXamlPath)
             $node = [System.Xml.XmlNodeReader]::new($xml)
             $Window.Content = [System.Windows.Markup.XamlReader]::Load($node)
         }
 
         # Caption buttons (min/max) -> apply when handle exists
-        if ($DisableMinimizeButton -or $DisableMaximizeButton) {
-            if ($Window.IsInitialized) {
+        if ($DisableMinimizeButton -or $DisableMaximizeButton)
+        {
+            if ($Window.IsInitialized)
+            {
                 & $applyCaptionStyles $Window $DisableMinimizeButton.IsPresent $DisableMaximizeButton.IsPresent
-            } else {
+            }
+            else
+            {
                 # Apply after SourceInitialized (first moment a handle exists)
-                $handler = [System.EventHandler]{
+                $handler = [System.EventHandler] {
                     & $applyCaptionStyles $Window $DisableMinimizeButton.IsPresent $DisableMaximizeButton.IsPresent
                 }
                 $Window.add_SourceInitialized($handler)
@@ -337,10 +525,12 @@ public static class User32 {
         }
 
         # Show / ShowDialog
-        if ($ShowDialog) {
+        if ($ShowDialog)
+        {
             return $Window.ShowDialog()
         }
-        elseif ($Show) {
+        elseif ($Show)
+        {
             $Window.Show() | Out-Null
         }
 

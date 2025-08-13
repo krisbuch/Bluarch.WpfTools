@@ -12,6 +12,7 @@ CopyPaths:
   - Views
   - Assets
   - Libs
+  - Docs
 #  - DSCResources
   # - Modules
 Encoding: UTF8

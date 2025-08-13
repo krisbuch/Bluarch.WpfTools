@@ -2,44 +2,64 @@ function Set-WpfImage
 {
 <#
 .SYNOPSIS
-Sets the source, tooltip, stretch mode, dimensions, and opacity of a WPF Image control by its x:Name.
+    Sets the source, tooltip, stretch mode, dimensions, and opacity of a WPF Image control by its x:Name.
 
 .DESCRIPTION
-The Set-WpfImage function locates a WPF Image control within a given root element by its x:Name, then sets its image source from a specified file path. It also allows optional configuration of the image's tooltip, stretch mode, width, height, and opacity. The image file is loaded with the OnLoad cache option to avoid file locks.
+    The Set-WpfImage function locates a WPF Image control within a given root element by its x:Name, then sets its image source from a specified file path. It also allows optional configuration of the image's tooltip, stretch mode, width, height, and opacity. The image file is loaded with the OnLoad cache option to avoid file locks.
 
 .PARAMETER Root
-The root WPF FrameworkElement containing the Image control.
+    The root WPF FrameworkElement containing the Image control.
 
 .PARAMETER Name
-The x:Name of the Image control to update.
+    The x:Name of the Image control to update.
 
 .PARAMETER Path
-The file path to the image to display. Relative paths are resolved using $PSScriptRoot or the current location.
+    The file path to the image to display. Relative paths are resolved using $PSScriptRoot or the current location.
 
 .PARAMETER ToolTip
-Optional tooltip text to display when hovering over the image.
+    Optional tooltip text to display when hovering over the image.
 
 .PARAMETER Stretch
-Optional stretch mode for the image. Valid values are 'Uniform', 'UniformToFill', 'Fill', and 'None'. Default is 'Uniform'.
+    Optional stretch mode for the image. Valid values are 'Uniform', 'UniformToFill', 'Fill', and 'None'. Default is 'Uniform'.
 
 .PARAMETER Width
-Optional width to set for the Image control.
+    Optional width to set for the Image control.
 
 .PARAMETER Height
-Optional height to set for the Image control.
+    Optional height to set for the Image control.
 
 .PARAMETER Opacity
-Optional opacity value for the Image control, between 0.0 and 1.0.
+    Optional opacity value for the Image control, between 0.0 and 1.0.
 
 .EXAMPLE
-Set-WpfImage -Root $window -Name 'LogoImage' -Path 'Images/logo.png' -ToolTip 'Company Logo' -Stretch 'Uniform' -Width 128 -Height 128 -Opacity 0.9
+    Set-WpfImage -Root $window -Name 'LogoImage' -Path 'Images/logo.png' -ToolTip 'Company Logo' -Stretch 'Uniform' -Width 128 -Height 128 -Opacity 0.9
 
 .NOTES
-Requires PowerShell with access to WPF types (e.g., running in a WPF host or with Add-Type for PresentationFramework).
+    Requires PowerShell with access to WPF types (e.g., running in a WPF host or with Add-Type for PresentationFramework).
 
-Author      : Kristian Holm Buch
-Date        : 2025-08-11
-Copyright   : (C) 2025 - Kristian Holm Buch. All rights reserved.
+    📦 CONTENT
+    Module     ▹ Bluarch.WpfTools
+    Function   ▹ Set-WpfImage
+    Version    ▹ 1.0.0
+    Published  ▹ 2025-08-12
+
+    🪪 AUTHOR
+    Name       ▹ Kristian Holm Buch
+    Company    ▹ Bluagentis
+    Location   ▹ Copenhagen, Denmark
+    GitHub     ▹ https://github.com/krisbuch
+    LinkedIn   ▹ https://linkedin.com/in/kristianbuch
+
+    ©️ COPYRIGHT
+    Bluarch © 2025 by Kristian Holm Buch. All rights reserved.
+
+    🧾 LICENSE
+    Licensed under Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International.
+    To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-nd/4.0/
+
+    This license requires that reusers give credit to the creator.
+    It allows reusers to copy and distribute the material in any medium or
+    format in unadapted form and for noncommercial purposes only.
 #>
     [CmdletBinding()]
     param (

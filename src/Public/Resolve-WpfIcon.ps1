@@ -1,40 +1,65 @@
 function Resolve-WpfIcon
 {
-    <#
+<#
 .SYNOPSIS
-Resolve an icon name to a concrete file path (or a BitmapImage).
+    Resolve an icon name to a concrete file path (or a BitmapImage).
 
 .DESCRIPTION
-Searches common asset folders (default: $Root\Assets\Icons) for a file matching
-the given Name and optional Size hint. Supports .png, .ico, .jpg/.jpeg, .bmp, .svg
-(svg returneres som path; WPF loader ikke svg nativt). Returns either a string path
-(default) or a frozen BitmapImage when -AsImageSource is used.
+    Searches common asset folders (default: $Root\Assets\Icons) for a file matching
+    the given Name and optional Size hint. Supports .png, .ico, .jpg/.jpeg, .bmp, .svg
+    (svg returneres som path; WPF loader ikke svg nativt). Returns either a string path
+    (default) or a frozen BitmapImage when -AsImageSource is used.
 
 .PARAMETER Name
-Logical icon name, e.g. "Github", "LinkedIn", "Home".
-You can also pass a direct file path — then it’s just validated/resolved.
+    Logical icon name, e.g. "Github", "LinkedIn", "Home".
+    You can also pass a direct file path — then it’s just validated/resolved.
 
 .PARAMETER Root
-Project root. Default = $PSScriptRoot (hvis sat i din kalder).
+    Project root. Default = $PSScriptRoot (hvis sat i din kalder).
 
 .PARAMETER Library
-Relative subfolder to search first. Default = "Assets\Icons".
+    Relative subfolder to search first. Default = "Assets\Icons".
 
 .PARAMETER Size
-Optional size hint (e.g. 16, 24, 32, 48, 96). We try to prefer files/folders
-containing that size in the name or path.
+    Optional size hint (e.g. 16, 24, 32, 48, 96). We try to prefer files/folders
+    containing that size in the name or path.
 
 .PARAMETER Extensions
-Override/extend allowed file extensions.
+    Override/extend allowed file extensions.
 
 .PARAMETER AsImageSource
-Return a [System.Windows.Media.Imaging.BitmapImage] instead of a path.
+    Return a [System.Windows.Media.Imaging.BitmapImage] instead of a path.
 
 .PARAMETER ThrowOnNotFound
-Throw if not found (otherwise return $null).
+    Throw if not found (otherwise return $null).
 
 .PARAMETER Silent
-Suppress logging via Write-Msg/Write-Host.
+    Suppress logging via Write-Msg/Write-Host.
+
+.NOTES
+    📦 CONTENT
+    Module     ▹ Bluarch.WpfTools
+    Function   ▹ Resolve-WpfIcon
+    Version    ▹ 1.0.0
+    Published  ▹ 2025-08-12
+
+    🪪 AUTHOR
+    Name       ▹ Kristian Holm Buch
+    Company    ▹ Bluagentis
+    Location   ▹ Copenhagen, Denmark
+    GitHub     ▹ https://github.com/krisbuch
+    LinkedIn   ▹ https://linkedin.com/in/kristianbuch
+
+    ©️ COPYRIGHT
+    Bluarch © 2025 by Kristian Holm Buch. All rights reserved.
+
+    🧾 LICENSE
+    Licensed under Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International.
+    To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-nd/4.0/
+
+    This license requires that reusers give credit to the creator.
+    It allows reusers to copy and distribute the material in any medium or
+    format in unadapted form and for noncommercial purposes only.
 #>
     [CmdletBinding()]
     param(

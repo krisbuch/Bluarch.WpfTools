@@ -1,56 +1,80 @@
 function Load-WpfAssembly
 {
-    <#
+<#
 .SYNOPSIS
-Loads the Windows WPF assemblies you need (and optionally popular WPF packages) in a safe, idempotent way.
+    Loads the Windows WPF assemblies you need (and optionally popular WPF packages) in a safe, idempotent way.
 
 .DESCRIPTION
-Builds a list of assemblies from a preset (Minimal/Standard/Extended/All), optionally adds named package groups
-(MahApps, ModernWpf, MaterialDesign, FluentWpf) and any manual assembly names. Each assembly is loaded if not present.
-Supports probing custom folders and (optionally) wiring AssemblyResolve to those folders.
+    Builds a list of assemblies from a preset (Minimal/Standard/Extended/All), optionally adds named package groups
+    (MahApps, ModernWpf, MaterialDesign, FluentWpf) and any manual assembly names. Each assembly is loaded if not present.
+    Supports probing custom folders and (optionally) wiring AssemblyResolve to those folders.
 
 .PARAMETER Preset
-- Minimal  : WindowsBase, PresentationCore
-- Standard : + PresentationFramework, System.Xaml   (DEFAULT)
-- Extended : + ReachFramework, UIAutomationTypes, UIAutomationClient, WindowsFormsIntegration
-- All      : Extended + System.Windows.Forms, System.Drawing
+    - Minimal  : WindowsBase, PresentationCore
+    - Standard : + PresentationFramework, System.Xaml   (DEFAULT)
+    - Extended : + ReachFramework, UIAutomationTypes, UIAutomationClient, WindowsFormsIntegration
+    - All      : Extended + System.Windows.Forms, System.Drawing
 
 .PARAMETER Packages
-Optional package shortcuts (if present on disk or in the GAC):
-- MahApps        -> MahApps.Metro, ControlzEx
-- ModernWpf      -> ModernWpf, ModernWpf.Controls
-- MaterialDesign -> MaterialDesignThemes.Wpf, MaterialDesignColors
-- FluentWpf      -> FluentWPF
+    Optional package shortcuts (if present on disk or in the GAC):
+    - MahApps        -> MahApps.Metro, ControlzEx
+    - ModernWpf      -> ModernWpf, ModernWpf.Controls
+    - MaterialDesign -> MaterialDesignThemes.Wpf, MaterialDesignColors
+    - FluentWpf      -> FluentWPF
 
 .PARAMETER Assemblies
-Additional assembly names to load (e.g. 'PresentationFramework.Aero2').
+    Additional assembly names to load (e.g. 'PresentationFramework.Aero2').
 
 .PARAMETER ProbingPaths
-One or more folders to search recursively for *.dll (e.g. "$PSScriptRoot\Lib").
+    One or more folders to search recursively for *.dll (e.g. "$PSScriptRoot\Lib").
 
 .PARAMETER WireAssemblyResolve
-Attach an AssemblyResolve handler that resolves from ProbingPaths (good for transitive deps like ControlzEx).
+    Attach an AssemblyResolve handler that resolves from ProbingPaths (good for transitive deps like ControlzEx).
 
 .PARAMETER ThrowOnError
-Throw on the first failure instead of continuing.
+    Throw on the first failure instead of continuing.
 
 .PARAMETER PassThru
-Return a summary object (Loaded/Skipped/Failed).
+    Return a summary object (Loaded/Skipped/Failed).
 
 .PARAMETER Silent
-Suppress log output (respected by Write-Msg if available).
+    Suppress log output (respected by Write-Msg if available).
 
 .EXAMPLE
-Load-WpfAssembly
-# Loads Standard preset: WindowsBase, PresentationCore, PresentationFramework, System.Xaml
+    Load-WpfAssembly
+    # Loads Standard preset: WindowsBase, PresentationCore, PresentationFramework, System.Xaml
 
 .EXAMPLE
-Load-WpfAssembly -Preset Extended -Packages MahApps,MaterialDesign -ProbingPaths "$PSScriptRoot\Lib" -WireAssemblyResolve
-# Probes your Lib folder and wires AssemblyResolve so deps are found there.
+    Load-WpfAssembly -Preset Extended -Packages MahApps,MaterialDesign -ProbingPaths "$PSScriptRoot\Lib" -WireAssemblyResolve
+    # Probes your Lib folder and wires AssemblyResolve so deps are found there.
 
 .EXAMPLE
-Load-WpfAssembly -Assemblies PresentationFramework.Aero2 -PassThru
-# Adds an extra theme assembly and returns a summary.
+    Load-WpfAssembly -Assemblies PresentationFramework.Aero2 -PassThru
+    # Adds an extra theme assembly and returns a summary.
+.NOTES
+    📦 CONTENT
+    Module     ▹ Bluarch.WpfTools
+    Function   ▹ Load-WpfAssembly
+    Version    ▹ 1.0.0
+    Published  ▹ 2025-08-12
+
+    🪪 AUTHOR
+    Name       ▹ Kristian Holm Buch
+    Company    ▹ Bluagentis
+    Location   ▹ Copenhagen, Denmark
+    GitHub     ▹ https://github.com/krisbuch
+    LinkedIn   ▹ https://linkedin.com/in/kristianbuch
+
+    ©️ COPYRIGHT
+    Bluarch © 2025 by Kristian Holm Buch. All rights reserved.
+
+    🧾 LICENSE
+    Licensed under Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International.
+    To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-nd/4.0/
+
+    This license requires that reusers give credit to the creator.
+    It allows reusers to copy and distribute the material in any medium or
+    format in unadapted form and for noncommercial purposes only.
 #>
     [CmdletBinding()]
     param (

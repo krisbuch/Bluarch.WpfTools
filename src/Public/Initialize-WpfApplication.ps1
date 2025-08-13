@@ -1,5 +1,6 @@
-function Initialize-WpfApplication {
-<#
+function Initialize-WpfApplication
+{
+    <#
 .SYNOPSIS
     Ensure a single WPF Application exists (STA), keep it alive across runs, and merge a theme (by name or path).
 
@@ -72,68 +73,126 @@ function Initialize-WpfApplication {
     # Sæt normal dialog-adfærd (luk hovedvindue => afslut app)
     Initialize-WpfApplication -Theme CleanLight -SetShutdownOnMainWindowClose
 
+.NOTES
+    📦 CONTENT
+    Module     ▹ Bluarch.WpfTools
+    Function   ▹ Initialize-WpfApplication
+    Version    ▹ 1.0.0
+    Published  ▹ 2025-08-12
+
+    🪪 AUTHOR
+    Name       ▹ Kristian Holm Buch
+    Company    ▹ Bluagentis
+    Location   ▹ Copenhagen, Denmark
+    GitHub     ▹ https://github.com/krisbuch
+    LinkedIn   ▹ https://linkedin.com/in/kristianbuch
+
+    ©️ COPYRIGHT
+    Bluarch © 2025 by Kristian Holm Buch. All rights reserved.
+
+    🧾 LICENSE
+    Licensed under Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International.
+    To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-nd/4.0/
+
+    This license requires that reusers give credit to the creator.
+    It allows reusers to copy and distribute the material in any medium or
+    format in unadapted form and for noncommercial purposes only.
 #>
     [CmdletBinding()]
     param(
         [Parameter()]
         [Themes]$Theme = 'DarkSlate',
+
         [Parameter()]
         [string]$ThemePath,
+
         [Parameter()]
         [string]$ThemeRoot,
+
         [Parameter()]
         [bool]$IncludeBase = $true,
+
         [Parameter()]
         [bool]$ReplaceExisting = $true,
+
         [Parameter()]
-        [ValidateSet('Application','Window')]
+        [ValidateSet('Application', 'Window')]
         [string]$Scope = 'Application',
+
         [Parameter()]
         [System.Windows.FrameworkElement]$Window,
+
         [Parameter()]
         [switch]$SetShutdownOnMainWindowClose,
+
         [Parameter()]
         [switch]$PassThru
     )
 
     # --- Must be STA
-    if ([Threading.Thread]::CurrentThread.GetApartmentState() -ne 'STA') {
+    if ([Threading.Thread]::CurrentThread.GetApartmentState() -ne 'STA')
+    {
         throw "WPF requires STA. Start pwsh with -STA or use an STA runspace."
     }
 
     # --- Get/Create Application
     $app = [System.Windows.Application]::Current
     $created = $false
-    if ($null -eq $app) {
+    if ($null -eq $app)
+    {
         $app = [System.Windows.Application]::new()
         $created = $true
     }
 
     # --- Dispatcher must be alive
-    if ($app.Dispatcher.HasShutdownStarted -or $app.Dispatcher.HasShutdownFinished) {
+    if ($app.Dispatcher.HasShutdownStarted -or $app.Dispatcher.HasShutdownFinished)
+    {
         throw "The WPF dispatcher has already shut down in this session. Start a new PowerShell session."
     }
 
     # --- Shutdown behavior
-    $app.ShutdownMode = if ($SetShutdownOnMainWindowClose) {
+    $app.ShutdownMode = if ($SetShutdownOnMainWindowClose)
+    {
         [System.Windows.ShutdownMode]::OnMainWindowClose
-    } else {
+    }
+    else
+    {
         [System.Windows.ShutdownMode]::OnExplicitShutdown
     }
 
     # --- Target resources (Application or Window scope)
-    $targetRD = if ($Scope -eq 'Window') {
-        if (-not $Window) { throw "When -Scope Window is used, you must pass -Window." }
-        if (-not $Window.Resources) { $Window.Resources = [System.Windows.ResourceDictionary]::new() }
+    $targetRD = if ($Scope -eq 'Window')
+    {
+        if (-not $Window)
+        {
+            throw "When -Scope Window is used, you must pass -Window."
+        }
+        if (-not $Window.Resources)
+        {
+            $Window.Resources = [System.Windows.ResourceDictionary]::new()
+        }
         $Window.Resources
-    } else {
-        if (-not $app.Resources) { $app.Resources = [System.Windows.ResourceDictionary]::new() }
+    }
+    else
+    {
+        if (-not $app.Resources)
+        {
+            $app.Resources = [System.Windows.ResourceDictionary]::new()
+        }
         $app.Resources
     }
 
     # --- Resolve theme root (default: "<script folder>\Themes")
-    if (-not $ThemeRoot -or $ThemeRoot.Trim() -eq '') {
-        $scriptFolder = if ($PSCommandPath) { Split-Path -Parent $PSCommandPath } else { (Get-Location).Path }
+    if (-not $ThemeRoot -or $ThemeRoot.Trim() -eq '')
+    {
+        $scriptFolder = if ($PSCommandPath)
+        {
+            Split-Path -Parent $PSCommandPath
+        }
+        else
+        {
+            (Get-Location).Path
+        }
         $ThemeRoot = Join-Path $scriptFolder 'Themes'
     }
 
@@ -141,39 +200,66 @@ function Initialize-WpfApplication {
     $dictPaths = New-Object System.Collections.Generic.List[string]
 
     # If a custom ThemePath is provided, it wins
-    if ($ThemePath) {
-        if (-not (Test-Path -LiteralPath $ThemePath -PathType Leaf)) {
+    if ($ThemePath)
+    {
+        if (-not (Test-Path -LiteralPath $ThemePath -PathType Leaf))
+        {
             throw "Theme not found: $ThemePath"
         }
-        if ($IncludeBase) {
+        if ($IncludeBase)
+        {
             $basePath = Join-Path $ThemeRoot 'BaseStyles.xaml'
-            if (Test-Path -LiteralPath $basePath -PathType Leaf) {
+            if (Test-Path -LiteralPath $basePath -PathType Leaf)
+            {
                 [void]$dictPaths.Add((Resolve-Path -LiteralPath $basePath).ProviderPath)
-            } else {
+            }
+            else
+            {
                 Write-Verbose "BaseStyles.xaml not found at '$basePath' – skipping base."
             }
         }
         [void]$dictPaths.Add((Resolve-Path -LiteralPath $ThemePath).ProviderPath)
     }
-    else {
-        if ($Theme -ne 'None') {
-            if ($IncludeBase) {
+    else
+    {
+        if ($Theme -ne 'None')
+        {
+            if ($IncludeBase)
+            {
                 $basePath = Join-Path $ThemeRoot 'BaseStyles.xaml'
-                if (Test-Path -LiteralPath $basePath -PathType Leaf) {
+                if (Test-Path -LiteralPath $basePath -PathType Leaf)
+                {
                     [void]$dictPaths.Add((Resolve-Path -LiteralPath $basePath).ProviderPath)
-                } else {
+                }
+                else
+                {
                     Write-Verbose "BaseStyles.xaml not found at '$basePath' – skipping base."
                 }
             }
-            $fileName = switch ($Theme) {
-                'DarkSlate'   { 'Theme.DarkSlate.xaml' }
-                'CleanLight'  { 'Theme.CleanLight.xaml' }
-                'HighContrast'{ 'Theme.HighContrast.xaml' }
-                'NordBlue'    { 'Theme.NordBlue.xaml' }
+            $fileName = switch ($Theme)
+            {
+                'DarkSlate'
+                {
+                    'Theme.DarkSlate.xaml'
+                }
+                'CleanLight'
+                {
+                    'Theme.CleanLight.xaml'
+                }
+                'HighContrast'
+                {
+                    'Theme.HighContrast.xaml'
+                }
+                'NordBlue'
+                {
+                    'Theme.NordBlue.xaml'
+                }
             }
-            if ($fileName) {
+            if ($fileName)
+            {
                 $themeFile = Join-Path $ThemeRoot $fileName
-                if (-not (Test-Path -LiteralPath $themeFile -PathType Leaf)) {
+                if (-not (Test-Path -LiteralPath $themeFile -PathType Leaf))
+                {
                     throw "Theme '$Theme' not found at: $themeFile"
                 }
                 [void]$dictPaths.Add((Resolve-Path -LiteralPath $themeFile).ProviderPath)
@@ -182,42 +268,59 @@ function Initialize-WpfApplication {
     }
 
     # Nothing to merge? Exit early.
-    if ($dictPaths.Count -eq 0) {
-        if ($PassThru) { return [pscustomobject]@{ Application=$app; Created=$created } }
+    if ($dictPaths.Count -eq 0)
+    {
+        if ($PassThru)
+        {
+            return [pscustomobject]@{ Application = $app; Created = $created }
+        }
         return
     }
 
     # --- Optional: remove any previously merged Theme.*.xaml / BaseStyles.xaml (ReplaceExisting)
-    if ($ReplaceExisting) {
+    if ($ReplaceExisting)
+    {
         $existing = @($targetRD.MergedDictionaries)
-        foreach ($d in $existing) {
-            try {
-                if ($d.Source) {
+        foreach ($d in $existing)
+        {
+            try
+            {
+                if ($d.Source)
+                {
                     $name = [System.IO.Path]::GetFileName($d.Source.LocalPath)
-                    if ($name -and ($name -like 'Theme.*.xaml' -or $name -ieq 'BaseStyles.xaml')) {
+                    if ($name -and ($name -like 'Theme.*.xaml' -or $name -ieq 'BaseStyles.xaml'))
+                    {
                         [void]$targetRD.MergedDictionaries.Remove($d)
                     }
                 }
-            } catch { }
+            }
+            catch
+            {
+            }
         }
     }
 
     # --- De-dupe exact same Source and add new dictionaries
-    foreach ($path in $dictPaths) {
+    foreach ($path in $dictPaths)
+    {
         $uri = [System.Uri]::new($path, [System.UriKind]::Absolute)
 
         # Remove any existing with same AbsoluteUri
         $dupes = @($targetRD.MergedDictionaries | Where-Object {
-            $_.Source -and $_.Source.AbsoluteUri -eq $uri.AbsoluteUri
-        })
-        foreach ($d in $dupes) { [void]$targetRD.MergedDictionaries.Remove($d) }
+                $_.Source -and $_.Source.AbsoluteUri -eq $uri.AbsoluteUri
+            })
+        foreach ($d in $dupes)
+        {
+            [void]$targetRD.MergedDictionaries.Remove($d)
+        }
 
         $rd = [System.Windows.ResourceDictionary]::new()
         $rd.Source = $uri
         [void]$targetRD.MergedDictionaries.Add($rd)
     }
 
-    if ($PassThru) {
+    if ($PassThru)
+    {
         [pscustomobject]@{
             Application = $app
             Created     = $created
